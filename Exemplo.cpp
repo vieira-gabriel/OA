@@ -11,11 +11,11 @@
 using namespace std;
 
 int main(){
-	ofstream BD;							// Objeto do arquivo para escrita
+	//ofstream BD;							// Objeto do arquivo para escrita
 	ifstream BDs;							// Objeto do arquivo para leitura
 	string nome, numero;
 
-	BD.open("usuarios.txt");				// Abre arquivo
+	/*BD.open("usuarios.txt");				// Abre arquivo
 	BD << "teste 1\n";						// Escreve no arquivo
 	BD.close();								// Fecha arquivo de escrita
 
@@ -34,18 +34,17 @@ int main(){
 	BD.open("usuarios.txt",std::fstream::app);	// Aqui ele abre um arquivo existente pra escrita, caso n exista o "app" no final,
 												//ele sobrescreve no que ja existia no arquivo
 	BD << "teste 2\n";
-	BD.close();
+	BD.close();*/
 
-	BDs.open("usuarios.txt");
+	BDs.open("lista1.txt");
 
-	BDs >> nome;
 	BDs >> numero;
 	while(BDs.good()){						// laço de repetição para executar enquanto o arquivo não acaba
-		cout << nome << " ";
-		cout << numero << endl;
-		BDs >> nome;
+		cout << numero << " ";
+		if(numero == "A" || numero == "B") cout << endl;
 		BDs >> numero;
 	}
+	cout << endl;
 	BDs.close();
 	return 0;
 }

@@ -5,41 +5,37 @@
 	Vanessa Rodrigues Galeno - 16/0147069
 */
 
-#include<stdio.h>
-#include<stdlib.h>
-#include <string>
-#include <cstring>
-#include <stdexcept>
-#include<string.h>
-#include <iostream>
-#include <fstream>
+#include "Registros.hpp"
 
 using namespace std;
 
 
 void menu(){
 	int resp=0;
+	ArquivoDeIndice L1;
+	ArquivoDeIndice L2;
 
 	do{
-		printf("Escolha uma das opcoes e digite o numero correspondente:\n");
-		printf("1) Incluir registros.\n2) Excluir registros.\n3) Atualizar registros.\n4) Visualizar todos os registros.\n");
-		scanf("%d",&resp);
+		cout << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;
+		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Visualizar todos os registros." << endl;
+		cin >> resp;
 		if(resp<1 || resp>4)
-			printf("\nOpcao inválida, escolha uma das opcoes abaixo:\n\n");
+			cout << endl << "Opcao inválida, escolha uma das opcoes abaixo:" << endl << endl;
 	}while(resp<1 || resp>4);
 
 	switch(resp){
 		case(1):
-			printf("Te enganei, nao da pra incluir ainda.\n");
+			cout << "Te enganei, nao da pra incluir ainda." << endl;
+			// 
 			break;
 		case(2):
-			printf("Te enganei, nao da pra excluir ainda.\n");
+			cout << "Te enganei, nao da pra excluir ainda." << endl;
 			break;
 		case(3):
-			printf("Te enganei, nao da pra atualizar ainda.\n");
+			cout << "Te enganei, nao da pra atualizar ainda." << endl;
 			break;
 		case(4):
-			printf("Te enganei, nao da pra visualizar ainda.\n");
+			cout << "Te enganei, nao da pra visualizar ainda." << endl;
 			break;
 	}
 }
