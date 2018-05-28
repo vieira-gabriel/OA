@@ -3,13 +3,7 @@
 bool troca(string atual, string incere){
 	int j = 0;
 	while(atual[j] == incere[j])++j;
-	if (atual[j] > incere[j]){
-	cout<<"PRECISA TROCAR"<<endl;
-	cout<<'\t'<<atual[j]<<' '<<incere[j] << "j = "<<j<<endl<<endl;
-
-		return 1;
-	}
-	cout<<"entrou"<<endl;
+	if (atual[j] > incere[j]) return 1;
 	return 0;
 }
 
@@ -149,7 +143,6 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Incere chave no ultimo elemento da lista se ele ja não existir nela
 
-	this->visualizar();
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -184,7 +177,6 @@ void ArquivoDeIndice::criar(char arquivo[]){
 			}
 			else break;
 		}while((nome[0] < '0' || nome[0] > '9'));
-		cout << chaveP << endl;
 
 		Chave1.identificador = chaveP;
 		File >> curso;
@@ -198,34 +190,40 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	File.close();
 }
 
-void excluir(){ 
-	string matricula, nome, curso, chave;
+void ArquivoDeIndice::excluir(){ 
+	string matricula, nome, curso, chave, temp;
 	int flag=0;
 	char resp;
 	list<IndiceP>::iterator ponteiroP;
 	list<IndiceP>::iterator anterior;
-+	list<IndiceS>::iterator ponteiroS;
+	list<IndiceS>::iterator ponteiroS;
 
 	cout << "Informe os dados do registro a ser excluído:" << endl;		//Informacoes do registro que deve ser excluido.
 	cout << "Qual eh a matricula? ";
 	cin >> matricula;
 	cout << "Qual eh o nome? ";		//colocar loop para pegar as iniciais
 	cin >> nome;
+	chave = matricula + nome[0];
+	for(int i = 1; nome[i] != '\0', ++i){
+		if (nome[i] = ' ') chave += nome[i-1];
+	}
 	//concatenar na variavel 'chave'
 	cout << "Qual eh o curso? ";
 	cin >> curso;
 	
-	while(flag == 1 || ponteiroS != secundario.end()){				//procura no indice secundario.
-		if(strcmp(curso, ponteiroS->curso))											//Verifica se eh igual.
+	while(flag == 1 || ponteiroS != this->secundario.end()){				//procura no indice secundario.
+		ponteiroS = this->secundario.begin();
+		temp = ponteiroS->curso;
+		if(strcmp(curso, temp))											//Verifica se eh igual.
 			flag++;
 		ponteiroS++;
 	}
 	if(flag == 1){
-		ponteiroP = *ponteiroS->registroP;
-+		if(ponteiroP != NULL){
+		ponteiroP = ponteiroS->registroP;
+		if(ponteiroP != primario.end()){
 			while(ponteiroP->identificador != chave || ponteiroP != NULL){		//procura no indice primario.
-				anterior = *ponteiroP;											//guarda a referencia do anterior.
-				ponteiroP = *ponteiroP->registro;								//passa pro proximo.
+				anterior = ponteiroP;											//guarda a referencia do anterior.
+				ponteiroP = ponteiroP->registro;								//passa pro proximo.
 			}
 			if(ponteiroP->identificador == chave){			//Se for o registro, retira e apaga.
 				anterior->registro = *ponteiroP->registro;
@@ -248,7 +246,7 @@ void excluir(){
 			cout << "Resposta invalida." << endl;
 	}while(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
 	if(resp == 's' || resp == 'S')
-		excluir();						//Chama a funcao de novo se o usuario quiser excluir outro registro.
+		this->excluir();						//Chama a funcao de novo se o usuario quiser excluir outro registro.
 	//atualiza o arq.ind 
-	visualizar();
+	this->visualizar();
 }

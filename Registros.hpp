@@ -17,6 +17,8 @@ using namespace std;
 
 bool troca(string, string);
 
+void CriaInd(ArquivoDeIndice);
+
 typedef struct RegistroP{
 	string 	identificador;							// Esse identificador vai ser a matricula mais as iniciais do nome
 	int ProxRegistro, posicao;
