@@ -34,12 +34,12 @@ void ArquivoDeIndice::visualizar(){
 }
 
 void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
-	list<IndiceP>::iterator ponteiroP, ponteiroSP, ponteiroAuxP;
+	list<IndiceP>::iterator ponteiroP, ponteiroSP, ponteiroAuxP, anterior;
 	list<IndiceS>::iterator ponteiroS, ponteiroAuxS ,fim;
 	IndiceP * regist;
 	IndiceP AuxP;
 	IndiceS AuxS;
-	int pos = 1, trocou = 0, Prox;
+	int pos = 1, trocouS = 0, trocouP = 0, Prox;
 	string id;
 	list<IndiceP>::iterator temp;
 
@@ -67,19 +67,20 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 				Chave2 = AuxS;
 				ponteiroAuxS = ponteiroS;
 				AuxS = *ponteiroS;
-				trocou = 1;
+				trocouS = 1;
 			}
 			pos++;
 			ponteiroS++;															// Aponta para proximo elemento
+			if(trocouS) ++Chave2.posicao;
 		}
-		if(trocou && ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2); 
+		if(trocouS && ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2); 
 	}
 	Chave2.posicao = pos;
 
 //----------------- Incerindo a chave na lista primária -----------------------------------------------------------------
 
 	pos = 1;
-	if(trocou){
+	if(trocouS){
 		Chave2 = AuxS;
 		ponteiroS = ponteiroAuxS;
 	}
@@ -101,14 +102,23 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 				Chave1 = AuxP;
 				ponteiroAuxP = ponteiroP;
 				AuxP = *ponteiroP;
-				trocou = 1;
+				trocouP = 1;
 				break;
 			}
 		}while(Prox != -1 || ponteiroP->registro != primario.end());
-		if(trocou && ponteiroP->identificador != Chave1.identificador){
+
+		if(trocouP && ponteiroP->identificador != Chave1.identificador){
+			anterior = this->primario.begin();
+			while(anterior != this->primario.end()){
+				anterior++;
+				pos++;
+			}
+			Chave1.posicao = pos;
 			this->primario.insert(this->primario.end(), Chave1);
+			anterior = this->primario.end();
 			Chave1 = AuxP;
 			ponteiroP = ponteiroAuxP;
+			pos = 0;
 		}
 		Chave1.ProxRegistro = -1;
 		ponteiroAuxP = this->primario.begin();
@@ -132,7 +142,7 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 		Chave1.registro = primario.end();
 		Chave1.ProxRegistro = -1;
 		Chave2.registroP = ponteiroP;
-		if(trocou) ponteiroAuxS->posicaoP = pos;
+		if(trocouS) ponteiroAuxS->posicaoP = pos;
 		else Chave2.posicaoP = pos;
 		this->primario.insert(ponteiroP, Chave1);
 	}
