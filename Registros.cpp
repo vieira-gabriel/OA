@@ -197,3 +197,58 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	cout << endl;
 	File.close();
 }
+
+void excluir(){ 
+	string matricula, nome, curso, chave;
+	int flag=0;
+	char resp;
+	list<IndiceP>::iterator ponteiroP;
+	list<IndiceP>::iterator anterior;
++	list<IndiceS>::iterator ponteiroS;
+
+	cout << "Informe os dados do registro a ser excluído:" << endl;		//Informacoes do registro que deve ser excluido.
+	cout << "Qual eh a matricula? ";
+	cin >> matricula;
+	cout << "Qual eh o nome? ";		//colocar loop para pegar as iniciais
+	cin >> nome;
+	//concatenar na variavel 'chave'
+	cout << "Qual eh o curso? ";
+	cin >> curso;
+	
+	while(flag == 1 || ponteiroS != secundario.end()){				//procura no indice secundario.
+		if(strcmp(curso, ponteiroS->curso))											//Verifica se eh igual.
+			flag++;
+		ponteiroS++;
+	}
+	if(flag == 1){
+		ponteiroP = *ponteiroS->registroP;
++		if(ponteiroP != NULL){
+			while(ponteiroP->identificador != chave || ponteiroP != NULL){		//procura no indice primario.
+				anterior = *ponteiroP;											//guarda a referencia do anterior.
+				ponteiroP = *ponteiroP->registro;								//passa pro proximo.
+			}
+			if(ponteiroP->identificador == chave){			//Se for o registro, retira e apaga.
+				anterior->registro = *ponteiroP->registro;
+				anterior->ProxRegistro = ponteiroP->ProxRegistro;	//Tem '*'?
+				free(ponteiroP);							//Exclui registro e libera a memória.
+			}else{
+				cout << "Registro inexistente." << endl;
+			}
+		} else{
+			cout << "Registro inexistente." << endl;
+		}
+	}else{
+		cout << "Registro inexistente, nao ha o curso informado." << endl;
+	}
+	
+	do{
+		cout << "Quer retirar outro? (S/N)" << endl;
+		cin >> resp;
+		if(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
+			cout << "Resposta invalida." << endl;
+	}while(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
+	if(resp == 's' || resp == 'S')
+		excluir();						//Chama a funcao de novo se o usuario quiser excluir outro registro.
+	//atualiza o arq.ind 
+	visualizar();
+}
