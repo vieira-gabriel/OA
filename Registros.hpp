@@ -2,6 +2,7 @@
 #define REGISTROS_H
 
 #include<stdio.h>
+#include <stdbool.h>
 #include<stdlib.h>
 #include <string>
 #include <cstring>
@@ -13,6 +14,8 @@
 #include <iterator>
 
 using namespace std;
+
+bool troca(string, string);
 
 typedef struct RegistroP{
 	string 	identificador;							// Esse identificador vai ser a matricula mais as iniciais do nome

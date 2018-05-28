@@ -31,6 +31,7 @@ void menu(){
 	const char* arquivo;
 	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
 	ArquivoDeIndice L1;
+	ArquivoDeIndice L2;
 
 	L1.criar(lista1);
 	cout<< endl << "fim lista 1" << endl;

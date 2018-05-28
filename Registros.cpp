@@ -1,5 +1,18 @@
 #include "Registros.hpp"
 
+bool troca(string atual, string incere){
+	int j = 0;
+	while(atual[j] == incere[j])++j;
+	if (atual[j] > incere[j]){
+	cout<<"PRECISA TROCAR"<<endl;
+	cout<<'\t'<<atual[j]<<' '<<incere[j] << "j = "<<j<<endl<<endl;
+
+		return 1;
+	}
+	cout<<"entrou"<<endl;
+	return 0;
+}
+
 void ArquivoDeIndice::visualizar(){
 
 	if(this->primario.empty()){
@@ -80,18 +93,16 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 			}
 			Prox = ponteiroP->ProxRegistro;
 	    	if (ponteiroP->identificador == Chave1.identificador) break;      // Caso já exista a chave, não realiza mais nada;
-			for(int j; j <= 10; ++j){
-				if (ponteiroP->identificador[j] > Chave1.identificador[j]){
-					AuxP = *ponteiroP;
-					ponteiroP->identificador = Chave1.identificador;
-					ponteiroP->ProxRegistro = Chave1.ProxRegistro;
-					ponteiroP->registro = Chave1.registro;
-					Chave1 = AuxP;
-					ponteiroAuxP = ponteiroP;
-					AuxP = *ponteiroP;
-					trocou = 1;
-					break;
-				}
+			if (troca(ponteiroP->identificador, Chave1.identificador)){
+				AuxP = *ponteiroP;
+				ponteiroP->identificador = Chave1.identificador;
+				ponteiroP->ProxRegistro = Chave1.ProxRegistro;
+				ponteiroP->registro = Chave1.registro;
+				Chave1 = AuxP;
+				ponteiroAuxP = ponteiroP;
+				AuxP = *ponteiroP;
+				trocou = 1;
+				break;
 			}
 		}while(Prox != -1 || ponteiroP->registro != primario.end());
 		if(trocou && ponteiroP->identificador != Chave1.identificador){
@@ -129,7 +140,6 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Incere chave no ultimo elemento da lista se ele ja não existir nela
 
 	this->visualizar();
-
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -164,6 +174,7 @@ void ArquivoDeIndice::criar(char arquivo[]){
 			}
 			else break;
 		}while((nome[0] < '0' || nome[0] > '9'));
+		cout << chaveP << endl;
 
 		Chave1.identificador = chaveP;
 		File >> curso;
