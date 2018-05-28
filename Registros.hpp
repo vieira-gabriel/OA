@@ -16,8 +16,7 @@
 using namespace std;
 
 bool troca(string, string);
-
-void CriaInd(ArquivoDeIndice);
+//void CriaInd(ArquivoDeIndice);
 
 typedef struct RegistroP{
 	string 	identificador;							// Esse identificador vai ser a matricula mais as iniciais do nome
@@ -45,5 +44,8 @@ public:
 	void excluir();
 	void atualizar();
 };
+
+void ordena(list<IndiceP>::iterator, IndiceP);
+void merge(ArquivoDeIndice, ArquivoDeIndice);
 
 #endif

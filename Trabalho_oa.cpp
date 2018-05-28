@@ -34,7 +34,6 @@ void menu(){
 	ArquivoDeIndice L2;
 
 	L1.criar(lista1);
-	cout<< endl << "fim lista 1" << endl;
 	L2.criar(lista2);
 
 	cout << endl << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;

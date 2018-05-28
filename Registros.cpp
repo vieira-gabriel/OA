@@ -7,6 +7,11 @@ bool troca(string atual, string incere){
 	return 0;
 }
 
+void ordena(list<IndiceP>::iterator anterior, IndiceP *Chave1){
+	Chave1->ProxRegistro = anterior->ProxRegistro;
+	Chave1->registro = anterior->registro;
+}
+
 void ArquivoDeIndice::visualizar(){
 
 	if(this->primario.empty()){
@@ -17,7 +22,6 @@ void ArquivoDeIndice::visualizar(){
 	for(list<IndiceS>::iterator ponteiroS = this->secundario.begin(); ponteiroS != this->secundario.end(); ++ponteiroS){
     	cout << ponteiroS->posicao << '\t' << ponteiroS->curso << '\t' << ponteiroS->posicaoP << endl;
 	}
-
 
     cout << endl << "\t\tIndices primarios" << endl << endl;
 	for(list<IndiceP>::iterator ponteiroP = this->primario.begin(); ponteiroP != this->primario.end(); ++ponteiroP){
@@ -78,71 +82,62 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 		Chave2 = AuxS;
 		ponteiroS = ponteiroAuxS;
 	}
-	if(Chave2.posicaoP != -1){				// Se a chave secundária não aponta para nenhum elemento na lista primária
-		Prox = Chave2.posicaoP;
+	ponteiroP = this->primario.begin();
+	while(ponteiroP != this->primario.end()){
+		pos++;
+		ponteiroP++;
+	}
+	Chave1.posicao = pos;
 
+	if(Chave2.posicaoP == -1){
+		Chave1.registro = primario.end();
+		Chave1.ProxRegistro = -1;
+		Chave2.registroP = primario.end();
+		if(trocouS) ponteiroAuxS->posicaoP = pos;
+		else Chave2.posicaoP = pos;
+		this->primario.insert(primario.end(), Chave1);
+	}
+	else{
+		Prox = Chave2.posicaoP;
 		do{
 			ponteiroP = this->primario.begin();
 			for (int i = 1; i < Prox; ++i){
+				anterior = ponteiroP;
 				ponteiroP++;
 			}
+
 			Prox = ponteiroP->ProxRegistro;
 	    	if (ponteiroP->identificador == Chave1.identificador) break;      // Caso já exista a chave, não realiza mais nada;
 			if (troca(ponteiroP->identificador, Chave1.identificador)){
-				AuxP = *ponteiroP;
-				ponteiroP->identificador = Chave1.identificador;
-				ponteiroP->ProxRegistro = Chave1.ProxRegistro;
-				ponteiroP->registro = Chave1.registro;
-				Chave1 = AuxP;
-				ponteiroAuxP = ponteiroP;
-				AuxP = *ponteiroP;
 				trocouP = 1;
-				break;
+				ordena(anterior, &Chave1);
 			}
 		}while(Prox != -1 || ponteiroP->registro != primario.end());
-
+		if(!trocouP){
+			ponteiroP->ProxRegistro = Chave1.posicao;
+			ponteiroAuxP = this->primario.begin();
+			while(ponteiroAuxP->registro != this->primario.end()) ponteiroAuxP++;
+			ponteiroP->registro = ponteiroAuxP;
+			Chave1.ProxRegistro = -1;
+			Chave1.registro = primario.end();
+		}
+		pos = 1;
 		if(trocouP && ponteiroP->identificador != Chave1.identificador){
+			anterior->ProxRegistro = Chave1.posicao;
 			anterior = this->primario.begin();
 			while(anterior != this->primario.end()){
 				anterior++;
 				pos++;
 			}
 			Chave1.posicao = pos;
-			this->primario.insert(this->primario.end(), Chave1);
-			anterior = this->primario.end();
-			Chave1 = AuxP;
-			ponteiroP = ponteiroAuxP;
-			pos = 0;
 		}
-		Chave1.ProxRegistro = -1;
-		ponteiroAuxP = this->primario.begin();
-		while(ponteiroAuxP != this->primario.end()){
-			ponteiroAuxP++;
-			pos++;
-		}
-		Chave1.posicao = pos;
-		Chave1.registro = primario.end();
-		ponteiroP->ProxRegistro = pos;
-
-		if (ponteiroP->identificador != Chave1.identificador) this->primario.insert(this->primario.end(), Chave1);
-	}
-	else{									// Se a chave secundária aponta para nenhum elemento na lista primária, a chave primaria sera incerida no final da lista
-		ponteiroP = this->primario.begin();
-		while(ponteiroP != this->primario.end()){
-			pos++;
-			ponteiroP++;
-		}
-		Chave1.posicao = pos;
-		Chave1.registro = primario.end();
-		Chave1.ProxRegistro = -1;
 		Chave2.registroP = ponteiroP;
-		if(trocouS) ponteiroAuxS->posicaoP = pos;
-		else Chave2.posicaoP = pos;
-		this->primario.insert(ponteiroP, Chave1);
+		if(!trocouS) Chave2.posicaoP = pos;
+		this->primario.insert(primario.end(), Chave1);
 	}
 
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Incere chave no ultimo elemento da lista se ele ja não existir nela
-
+	this->visualizar();
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -155,6 +150,7 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	Chave2.registroP = primario.end();
 	Chave2.posicaoP = -1;
 	Chave1.registro = primario.end();
+	Chave1.ProxRegistro = -1;
 
 	if(!this->primario.empty()){
 		cout << "Lista ja existente" << endl;
@@ -190,7 +186,7 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	File.close();
 }
 
-void ArquivoDeIndice::excluir(){ 
+/*void ArquivoDeIndice::excluir(){ 
 	string matricula, nome, curso, chave, temp;
 	int flag=0;
 	char resp;
@@ -198,37 +194,42 @@ void ArquivoDeIndice::excluir(){
 	list<IndiceP>::iterator anterior;
 	list<IndiceS>::iterator ponteiroS;
 
-	cout << "Informe os dados do registro a ser excluído:" << endl;		//Informacoes do registro que deve ser excluido.
+	cout << "Informe os dados do registro cadastrado:" << endl;		//Informacoes do registro que deve ser excluido.
 	cout << "Qual eh a matricula? ";
 	cin >> matricula;
 	cout << "Qual eh o nome? ";		//colocar loop para pegar as iniciais
 	cin >> nome;
 	chave = matricula + nome[0];
-	for(int i = 1; nome[i] != '\0', ++i){
+	for(int i = 1; nome[i] != '\0'; ++i){
 		if (nome[i] = ' ') chave += nome[i-1];
 	}
+	cout << "Chave que sera excluida: " << chave << endl << endl;
 	//concatenar na variavel 'chave'
 	cout << "Qual eh o curso? ";
 	cin >> curso;
 	
+	ponteiroS = this->secundario.begin();
 	while(flag == 1 || ponteiroS != this->secundario.end()){				//procura no indice secundario.
-		ponteiroS = this->secundario.begin();
-		temp = ponteiroS->curso;
-		if(strcmp(curso, temp))											//Verifica se eh igual.
+		if(ponteiroS->curso == curso)											//Verifica se eh igual.
 			flag++;
 		ponteiroS++;
 	}
 	if(flag == 1){
 		ponteiroP = ponteiroS->registroP;
 		if(ponteiroP != primario.end()){
-			while(ponteiroP->identificador != chave || ponteiroP != NULL){		//procura no indice primario.
+			while(ponteiroP->identificador != chave || ponteiroP != primario.end()){		//procura no indice primario.
 				anterior = ponteiroP;											//guarda a referencia do anterior.
 				ponteiroP = ponteiroP->registro;								//passa pro proximo.
 			}
 			if(ponteiroP->identificador == chave){			//Se for o registro, retira e apaga.
-				anterior->registro = *ponteiroP->registro;
+				anterior->registro = ponteiroP->registro;
 				anterior->ProxRegistro = ponteiroP->ProxRegistro;	//Tem '*'?
 				free(ponteiroP);							//Exclui registro e libera a memória.
+				while(anterior->registro != primario.end()){
+					ponteiroP = anterior->registro;
+					anterior = ponteiroP->registro;
+					--ponteiroP->posicao;
+				}
 			}else{
 				cout << "Registro inexistente." << endl;
 			}
@@ -244,9 +245,9 @@ void ArquivoDeIndice::excluir(){
 		cin >> resp;
 		if(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
 			cout << "Resposta invalida." << endl;
-	}while(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
+	}while(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N');
 	if(resp == 's' || resp == 'S')
 		this->excluir();						//Chama a funcao de novo se o usuario quiser excluir outro registro.
 	//atualiza o arq.ind 
 	this->visualizar();
-}
+}*/
