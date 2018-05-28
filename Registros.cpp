@@ -3,16 +3,16 @@
 void ArquivoDeIndice::visualizar(){
 
 	if(this->primario.empty()){
-		cout << "\tLista não foi criada" << endl;
+		cout << "\tLista nao foi criada" << endl;
 		return;
 	}
-	cout << "\t\tIndices secunários" << endl << endl;
+	cout << "\t\tIndices secundarios" << endl << endl;
 	for(list<IndiceS>::iterator ponteiroS = this->secundario.begin(); ponteiroS != this->secundario.end(); ++ponteiroS){
     	cout << ponteiroS->posicao << '\t' << ponteiroS->curso << '\t' << ponteiroS->posicaoP << endl;
 	}
 
 
-    cout << endl << "\t\tIndices primários" << endl << endl;
+    cout << endl << "\t\tIndices primarios" << endl << endl;
 	for(list<IndiceP>::iterator ponteiroP = this->primario.begin(); ponteiroP != this->primario.end(); ++ponteiroP){
     	cout << '\t'  << ponteiroP->posicao << '\t' << ponteiroP->identificador << '\t' << ponteiroP->ProxRegistro << endl;
 	}
@@ -47,9 +47,7 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 				break;
 			}
 			if ((ponteiroS->curso[0] > Chave2.curso[0]) || (ponteiroS->curso[0] < Chave2.curso[0] && ponteiroS->curso[1] > Chave2.curso[1])){
-				AuxS.curso = ponteiroS->curso;
-				AuxS.registroP = ponteiroS->registroP;
-				AuxS.posicaoP = ponteiroS->posicaoP;
+				AuxS = *ponteiroS;
 				ponteiroS->curso = Chave2.curso;
 				ponteiroS->registroP = Chave2.registroP;
 				ponteiroS->posicaoP = Chave2.posicaoP;
@@ -82,7 +80,25 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 			}
 			Prox = ponteiroP->ProxRegistro;
 	    	if (ponteiroP->identificador == Chave1.identificador) break;      // Caso já exista a chave, não realiza mais nada;
+			for(int j; j <= 10; ++j){
+				if (ponteiroP->identificador[j] > Chave1.identificador[j]){
+					AuxP = *ponteiroP;
+					ponteiroP->identificador = Chave1.identificador;
+					ponteiroP->ProxRegistro = Chave1.ProxRegistro;
+					ponteiroP->registro = Chave1.registro;
+					Chave1 = AuxP;
+					ponteiroAuxP = ponteiroP;
+					AuxP = *ponteiroP;
+					trocou = 1;
+					break;
+				}
+			}
 		}while(Prox != -1 || ponteiroP->registro != primario.end());
+		if(trocou && ponteiroP->identificador != Chave1.identificador){
+			this->primario.insert(this->primario.end(), Chave1);
+			Chave1 = AuxP;
+			ponteiroP = ponteiroAuxP;
+		}
 		Chave1.ProxRegistro = -1;
 		ponteiroAuxP = this->primario.begin();
 		while(ponteiroAuxP != this->primario.end()){
@@ -94,25 +110,6 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 		ponteiroP->ProxRegistro = pos;
 
 		if (ponteiroP->identificador != Chave1.identificador) this->primario.insert(this->primario.end(), Chave1);
-
-
-		/*AuxP.registro = Chave2.registroP;
-		//AuxP.identificador = *(regist->identificador);
-		ponteiroAuxP = AuxP.registro;
-		cout<<AuxP.registro<<endl;
-		AuxP = *ponteiroAuxP;
-	    while(AuxP.registro != primario.end() && AuxP.identificador != Chave1.identificador){  // Verifica se a chave não existe na lista
-	    	AuxP.registro = AuxP.registro->registro;
-		}
-	    else{
-	    	AuxP.registro = Chave2.registroP;
-	        AuxP.registro = ponteiroSP->registro;
-	    	AuxP = *ponteiroSP;
-	    	while(AuxP.registro != primario.end()){    // Enquanto não chegar no ultimo elemento referente à chave secundária na lista primária
-	        // Compara se a chave 1 é maior ou menor para ja incerir na ordem certa
-	        AuxP.registro = regist->registro;
-	      	}
-	    }*/
 	}
 	else{									// Se a chave secundária aponta para nenhum elemento na lista primária, a chave primaria sera incerida no final da lista
 		ponteiroP = this->primario.begin();
@@ -153,7 +150,7 @@ void ArquivoDeIndice::criar(char arquivo[]){
 
 	File.open(arquivo);
 	if(!File.is_open()){
-		cout << "Arquivo não encontrado" << endl;
+		cout << "Arquivo nao encontrado" << endl;
 		exit(EXIT_FAILURE);
 	}
 	File >> matricula;
@@ -167,14 +164,11 @@ void ArquivoDeIndice::criar(char arquivo[]){
 			}
 			else break;
 		}while((nome[0] < '0' || nome[0] > '9'));
-		cout << chaveP<<endl;
 
 		Chave1.identificador = chaveP;
 		File >> curso;
-		cout << "curso: " << curso<<endl;
 		Chave2.curso = curso;
 		File >> turma;
-		cout << "turma: " << turma<<endl<<endl;
 
 		this->incluir(Chave1, Chave2);
 		File >> matricula;
