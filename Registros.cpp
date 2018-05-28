@@ -74,25 +74,36 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	}
 	if(Chave2.posicaoP != -1){				// Se a chave secundária não aponta para nenhum elemento na lista primária
 		Prox = Chave2.posicaoP;
+
 		do{
 			ponteiroP = this->primario.begin();
 			for (int i = 1; i < Prox; ++i){
 				ponteiroP++;
 			}
-			Prox = Chave2.posicaoP;
-		}while(Prox != -1);
+			Prox = ponteiroP->ProxRegistro;
+	    	if (ponteiroP->identificador == Chave1.identificador) break;      // Caso já exista a chave, não realiza mais nada;
+		}while(Prox != -1 || ponteiroP->registro != primario.end());
+		Chave1.ProxRegistro = -1;
+		ponteiroAuxP = this->primario.begin();
+		while(ponteiroAuxP != this->primario.end()){
+			ponteiroAuxP++;
+			pos++;
+		}
+		Chave1.posicao = pos;
+		Chave1.registro = primario.end();
+		ponteiroP->ProxRegistro = pos;
+
+		if (ponteiroP->identificador != Chave1.identificador) this->primario.insert(this->primario.end(), Chave1);
 
 
-		AuxP.registro = Chave2.registroP;
+		/*AuxP.registro = Chave2.registroP;
 		//AuxP.identificador = *(regist->identificador);
 		ponteiroAuxP = AuxP.registro;
 		cout<<AuxP.registro<<endl;
 		AuxP = *ponteiroAuxP;
-		cout<<"AQUIIIIIIIIUIUIUUIU"<<endl;
 	    while(AuxP.registro != primario.end() && AuxP.identificador != Chave1.identificador){  // Verifica se a chave não existe na lista
 	    	AuxP.registro = AuxP.registro->registro;
 		}
-	    if (ponteiroSP->identificador == Chave1.identificador);      // Caso já exista a chave, não realiza mais nada;
 	    else{
 	    	AuxP.registro = Chave2.registroP;
 	        AuxP.registro = ponteiroSP->registro;
@@ -101,7 +112,7 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	        // Compara se a chave 1 é maior ou menor para ja incerir na ordem certa
 	        AuxP.registro = regist->registro;
 	      	}
-	    }
+	    }*/
 	}
 	else{									// Se a chave secundária aponta para nenhum elemento na lista primária, a chave primaria sera incerida no final da lista
 		ponteiroP = this->primario.begin();
@@ -115,12 +126,12 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 		Chave2.registroP = ponteiroP;
 		if(trocou) ponteiroAuxS->posicaoP = pos;
 		else Chave2.posicaoP = pos;
+		this->primario.insert(ponteiroP, Chave1);
 	}
-	this->primario.insert(ponteiroP, Chave1);
 
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Incere chave no ultimo elemento da lista se ele ja não existir nela
 
-	//this->visualizar();
+	this->visualizar();
 
 	//Aqui entra algoritmo de ordenação lista secundária
 }
