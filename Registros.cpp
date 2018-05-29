@@ -2,7 +2,7 @@
 
 bool troca(string atual, string incere){
 	int j = 0;
-	while(atual[j] == incere[j])++j;
+	while(atual[j] == incere[j] && atual[j] != '\0' && incere[j] != '\0')++j;
 	if (atual[j] > incere[j]) return 1;
 	return 0;
 }
@@ -163,9 +163,11 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	}
 	File >> matricula;
 	while(File.good()){						// laço de repetição para executar enquanto o arquivo não acaba
+		Chave1.completo = matricula + ' ';
 		chaveP = matricula;
 		do{
 			File >> nome;
+			Chave1.completo += nome + ' ';
 			if(nome[0] < '0' || nome[0] > '9'){
 				aux = nome[0];
 				chaveP = chaveP + aux;
@@ -175,8 +177,10 @@ void ArquivoDeIndice::criar(char arquivo[]){
 
 		Chave1.identificador = chaveP;
 		File >> curso;
+		Chave1.completo += curso + ' ';
 		Chave2.curso = curso;
 		File >> turma;
+		Chave1.completo += turma + ' ';
 
 		this->incluir(Chave1, Chave2);
 		File >> matricula;
@@ -294,38 +298,52 @@ void ArquivoDeIndice::atualizar(){
 }
 
 
-ArquivoDeIndice merge(char lista1[], char lista2[]){
+ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
 	ArquivoDeIndice Junto;
-	ifstream File1, File2;
 	ofstream FileM;
-	string nome1, nome2, matricula;
-	list<string> registro1, registro2;
+	IndiceS Chave2;
+	list<IndiceP>::iterator ponteiroP1, ponteiroP2;
+	list<IndiceS>::iterator ponteiroS1, ponteiroS2, inicioS1, inicioS2, fimS1, fimS2;
+	int i = 0;
 
-	File1.open(lista1);
-	if(!File1.is_open()){
-		cout << "Arquivo nao encontrado" << endl;
-		exit(EXIT_FAILURE);
-	}
-	File2.open(lista2);
-	if(!File2.is_open()){
-		cout << "Arquivo nao encontrado" << endl;
-		exit(EXIT_FAILURE);
-	}
+	inicioS1 = L1.comecoS();
+	inicioS2 = L2.comecoS();
+	fimS1 = L1.fimS();
+	fimS2 = L2.fimS();
+
 	FileM.open("lista12.txt", std::ofstream::out | std::ofstream::trunc); // Se o arquivo existia anteriormente, ele apaga o que estava dentro
-	//getline(File1, registro1);	//salvar nome todo em uma string e depois pegar as iniciais para chave primária;
-	while(File1.good()){
-		
-	}
-	
 
-	//getline(File2, registro2);
+	do{
+		ponteiroS1 = inicioS1;
+		ponteiroS2 = inicioS2;
 
+		if(ponteiroS1->curso == ponteiroS1->curso){
+			Chave2 = *ponteiroS1;
+			ponteiroP1 = ponteiroS1->registroP;
+			ponteiroP2 = ponteiroS2->registroP;
 
+			do{
+				while(poteiroP1[j] == ponteiroP2[j] && poteiroP1[j] != '\0' && ponteiroP2[j] != '\0')++j;
+				if (poteiroP1[j] > ponteiroP2[j]){
+					Junto.incluir(ponteiroP2, Chave2);
+					++ponteiroP2;
+				}
+				else if(poteiroP1[j] < ponteiroP2[j]){
+					Junto.incluir(ponteiroP1, Chave2);
+					++ponteiroP1;
+				}
+				else{
+					Junto.incluir(ponteiroP1, Chave2);
+					++ponteiroP1;
+					++ponteiroP2;
+				}while(ponteiroP1 != primeiro.end()); //<--------------------------------- verificar
+			}
+		}
+		else{
 
+		}
+	}while(ponteiroS1 != fimS1 && ponteiroS2 != fimS2);
 
-	File1.close();
-	File2.close();
-	FileM.close();
-
+  	FileM.close();
 	return Junto;
 }

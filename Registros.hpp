@@ -11,6 +11,7 @@
 #include <fstream>
 #include <list>
 #include <iterator>
+#include <algorithm>
 
 using namespace std;
 
@@ -18,6 +19,7 @@ bool troca(string, string);
 //void CriaInd(ArquivoDeIndice);
 
 typedef struct RegistroP{
+	string completo;
 	string 	identificador;							// Esse identificador vai ser a matricula mais as iniciais do nome
 	int ProxRegistro, posicao;
 	list<RegistroP>::iterator registro;				// Ponteiro para próximo elemento referente ao índice secundário
@@ -42,7 +44,13 @@ public:
 	void criar(char*);
 	void excluir();
 	void atualizar();
+	list<IndiceS>::iterator comecoS(){
+		return this->secundario.begin();
+	}
+	list<IndiceS>::iterator fimS(){
+		return this->secundario.end();
+	}
 };
 
 void ordena(list<IndiceP>::iterator, IndiceP);
-ArquivoDeIndice merge(char lista1[], char lista2[]);
+//ArquivoDeIndice merge(char lista1[], char lista2[]);

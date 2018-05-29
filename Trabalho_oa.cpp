@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const char* EscolherArquivo(){
+string EscolherArquivo(){
 	char resp;
 	const char *arq;
 
@@ -29,7 +29,7 @@ const char* EscolherArquivo(){
 int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
 	char resp;
-	const char* arquivo;
+	string arquivo;
 	IndiceP Chave1;
 	IndiceS Chave2;
 	string nome, curso;
@@ -70,7 +70,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			cout<<"seu curso: "<<curso<<endl<<endl;
 			Chave2.curso = curso;
 
-			if(arquivo = "lista1.txt"){
+			if(arquivo == "lista1.txt"){
 				L1.incluir(Chave1, Chave2);
 				L1.visualizar();
 			}
@@ -81,7 +81,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			break;
 		case('2'):
 			arquivo = EscolherArquivo();
-			if(arquivo = "lista1.txt"){
+			if(arquivo == "lista1.txt"){
 				L1.excluir();
 				L1.visualizar();
 			}
@@ -92,7 +92,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			break;
 		case('3'):
 			arquivo = EscolherArquivo();
-			if(arquivo = "lista1.txt"){
+			if(arquivo == "lista1.txt"){
 				L1.atualizar();
 				L1.visualizar();
 			}
@@ -102,7 +102,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			}
 			break;
 		case('4'):
-			L3 = merge(lista1, lista2);
+			//L3 = merge(lista1, lista2);
 			L3.visualizar();
 			break;
 		case('5'):
