@@ -27,6 +27,7 @@ const char* EscolherArquivo(){
 }
 
 int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
+	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
 	char resp;
 	const char* arquivo;
 	IndiceP Chave1;
@@ -35,7 +36,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 
 	cout << endl << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;
 	do{
-		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Visualizar as duas turmas." << endl;
+		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Intercalar as duas turmas." << endl;
 		cout << "5) Sair." << endl;
 		cout << endl << ">> ";
 		cin >> resp;
@@ -60,6 +61,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			do{
 				cout << "Qual eh seu curso?(Entre com as duas iniciais em maiusculo) ";
 				cin>>curso;
+				cout<<"CURSO DIGITADO: "<<curso<<endl;
 				if(curso.size() > 2)
 					cout << "Entre com apenas as duas iniciais em maiusculo" << endl;
 				else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
@@ -100,7 +102,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			}
 			break;
 		case('4'):
-			merge();
+			L3 = merge(lista1, lista2);
 			L3.visualizar();
 			break;
 		case('5'):
@@ -117,7 +119,6 @@ int main(){
 
 	L1.criar(lista1);
 	L2.criar(lista2);
-	L1.visualizar();
 
 	while(menu(L1, L2, L3));
 

@@ -45,4 +45,4 @@ public:
 };
 
 void ordena(list<IndiceP>::iterator, IndiceP);
-void merge();
+ArquivoDeIndice merge(char lista1[], char lista2[]);

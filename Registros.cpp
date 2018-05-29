@@ -41,6 +41,11 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	string id;
 	list<IndiceP>::iterator temp;
 
+	Chave2.registroP = primario.end();
+	Chave2.posicaoP = -1;
+	Chave1.registro = primario.end();
+	Chave1.ProxRegistro = -1;
+
 //-----------------  Inserindo a chave na lista secundária -----------------------------------------------------------
 
 	pos = 1;
@@ -137,7 +142,6 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	}
 
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Insere chave no ultimo elemento da lista se ele ja não existir nela
-	this->visualizar();
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -146,11 +150,6 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	string matricula, nome, curso, chaveP, aux, turma;
 	IndiceP Chave1;
 	IndiceS Chave2;
-
-	Chave2.registroP = primario.end();
-	Chave2.posicaoP = -1;
-	Chave1.registro = primario.end();
-	Chave1.ProxRegistro = -1;
 
 	if(!this->primario.empty()){
 		cout << "Lista ja existente" << endl;
@@ -190,8 +189,7 @@ void ArquivoDeIndice::excluir(){
 	string nome, curso, chave, temp;
 	int flag;
 	char resp, turma;
-	list<IndiceP>::iterator ponteiroP;
-	list<IndiceP>::iterator anterior;
+	list<IndiceP>::iterator ponteiroP,anterior;
 	list<IndiceS>::iterator ponteiroS;
 	cout << "Informe os dados do registro cadastrado:" << endl;		//Informacoes do registro que deve ser excluido.
 	cout << "Matricula: ";
@@ -214,7 +212,7 @@ void ArquivoDeIndice::excluir(){
 	}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
 
 		//Procura no indice secundario.
-
+	cout<<"AQUIHEUHEUHUEHUE!!"<<endl;
 	ponteiroS = this->secundario.begin();
 	flag = 0;
 	while(flag != 1 && ponteiroS != this->secundario.end()){
@@ -276,10 +274,6 @@ void ArquivoDeIndice::atualizar(){
 	IndiceP Chave1;
 	IndiceS Chave2;
 
-	Chave2.registroP = primario.end();		//Inicializa o registro.
-	Chave2.posicaoP = -1;
-	Chave1.registro = primario.end();
-
 	this->excluir();					// Exclui o registro.
 	cout << "Informe os dados do registro com sua alteracao incluida:" << endl;
 	cout << "Curso: ";
@@ -300,6 +294,38 @@ void ArquivoDeIndice::atualizar(){
 }
 
 
-void merge(){
+ArquivoDeIndice merge(char lista1[], char lista2[]){
+	ArquivoDeIndice Junto;
+	ifstream File1, File2;
+	ofstream FileM;
+	string nome1, nome2, matricula;
+	list<string> registro1, registro2;
+
+	File1.open(lista1);
+	if(!File1.is_open()){
+		cout << "Arquivo nao encontrado" << endl;
+		exit(EXIT_FAILURE);
+	}
+	File2.open(lista2);
+	if(!File2.is_open()){
+		cout << "Arquivo nao encontrado" << endl;
+		exit(EXIT_FAILURE);
+	}
+	FileM.open("lista12.txt", std::ofstream::out | std::ofstream::trunc); // Se o arquivo existia anteriormente, ele apaga o que estava dentro
+	//getline(File1, registro1);	//salvar nome todo em uma string e depois pegar as iniciais para chave primária;
+	while(File1.good()){
+		
+	}
 	
+
+	//getline(File2, registro2);
+
+
+
+
+	File1.close();
+	File2.close();
+	FileM.close();
+
+	return Junto;
 }
