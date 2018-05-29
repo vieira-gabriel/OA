@@ -1,9 +1,8 @@
-#ifndef REGISTROS_H
 #define REGISTROS_H
 
-#include<stdio.h>
+#include <stdio.h>
 #include <stdbool.h>
-#include<stdlib.h>
+#include <stdlib.h>
 #include <string>
 #include <cstring>
 #include <stdexcept>
@@ -46,6 +45,4 @@ public:
 };
 
 void ordena(list<IndiceP>::iterator, IndiceP);
-void merge(ArquivoDeIndice, ArquivoDeIndice);
-
-#endif
+void merge();

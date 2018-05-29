@@ -20,7 +20,7 @@ void ArquivoDeIndice::visualizar(){
 	}
 	cout << "\t\tIndices secundarios" << endl << endl;
 	for(list<IndiceS>::iterator ponteiroS = this->secundario.begin(); ponteiroS != this->secundario.end(); ++ponteiroS){
-    	cout << '\t' << ponteiroS->posicao << '\t' << ponteiroS->curso << '\t' << ponteiroS->posicaoP << endl;
+    	cout << ponteiroS->posicao << '\t' << ponteiroS->curso << '\t' << ponteiroS->posicaoP << endl;
 	}
 
     cout << endl << "\t\tIndices primarios" << endl << endl;
@@ -41,15 +41,10 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	string id;
 	list<IndiceP>::iterator temp;
 
-	Chave2.registroP = primario.end();
-	Chave2.posicaoP = -1;
-	Chave1.registro = primario.end();
-	Chave1.ProxRegistro = -1;
-
-//-----------------  Incerindo a chave na lista secundária -----------------------------------------------------------
+//-----------------  Inserindo a chave na lista secundária -----------------------------------------------------------
 
 	pos = 1;
-	if(this->secundario.empty()){										// Incere no começo se a lista esiver vazia
+	if(this->secundario.empty()){										// Insere no começo se a lista esiver vazia
 		Chave2.posicao = pos;
 		ponteiroS = this->secundario.begin();
 	}
@@ -80,7 +75,7 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	}
 	Chave2.posicao = pos;
 
-//----------------- Incerindo a chave na lista primária -----------------------------------------------------------------
+//----------------- Inserindo a chave na lista primária -----------------------------------------------------------------
 
 	pos = 1;
 	if(trocouS){
@@ -141,7 +136,8 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 		this->primario.insert(primario.end(), Chave1);
 	}
 
-	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Incere chave no ultimo elemento da lista se ele ja não existir nela
+	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Insere chave no ultimo elemento da lista se ele ja não existir nela
+	this->visualizar();
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -150,6 +146,11 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	string matricula, nome, curso, chaveP, aux, turma;
 	IndiceP Chave1;
 	IndiceS Chave2;
+
+	Chave2.registroP = primario.end();
+	Chave2.posicaoP = -1;
+	Chave1.registro = primario.end();
+	Chave1.ProxRegistro = -1;
 
 	if(!this->primario.empty()){
 		cout << "Lista ja existente" << endl;
@@ -186,49 +187,65 @@ void ArquivoDeIndice::criar(char arquivo[]){
 }
 
 void ArquivoDeIndice::excluir(){ 
-	string matricula, nome, curso, chave, temp;
-	int flag=0;
-	char resp;
+	string nome, curso, chave, temp;
+	int flag;
+	char resp, turma;
 	list<IndiceP>::iterator ponteiroP;
 	list<IndiceP>::iterator anterior;
 	list<IndiceS>::iterator ponteiroS;
-
-	cout << endl << endl << "Informe os dados do registro cadastrado:" << endl;		//Informacoes do registro que deve ser excluido.
-	cout << "Qual eh a matricula? ";
-	cin >> matricula;
-	chave = matricula;
-	cout << "Qual eh o nome? ";		//colocar loop para pegar as iniciais
+	cout << "Informe os dados do registro cadastrado:" << endl;		//Informacoes do registro que deve ser excluido.
+	cout << "Matricula: ";
+	cin >> chave;
+	cout << "Nome: ";
 	getline (cin, nome);
 	getline (cin, nome);
-	cout<<endl<<"Nome: "<<nome<<endl;
 	chave = chave + nome[0];
-	for(int i = 1; nome[i] != '\0'; ++i){
-			if(nome[i-1] == ' ') chave = chave + nome[i];
+	for(int i = 1; nome[i] != '\0'; ++i){				// Pegar iniciais do nome.
+		if(nome[i-1] == ' ') 
+			chave = chave + nome[i];
 	}
-	cout << "Chave que sera excluida: " << chave << endl << endl;
-	//concatenar na variavel 'chave'
-	cout << "Qual eh o curso? ";
-	cin >> curso;
-	
+	do{
+		cout << "Curso:(Entre com as duas iniciais em maiusculo) ";
+		cin >> curso;
+		if(curso.size() > 2)
+			cout << "Entre com apenas as duas iniciais em maiusculo." << endl;
+		else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
+			cout << "Entrada inválida." << endl;
+	}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
+
+		//Procura no indice secundario.
+
 	ponteiroS = this->secundario.begin();
-	while(flag == 1 || ponteiroS != this->secundario.end()){				//procura no indice secundario.
-	cout<<"Aqui!!!!!!!!!"<<endl<<endl;
-		if(ponteiroS->curso == curso)											//Verifica se eh igual.
-			flag++;
-		ponteiroS++;
+	flag = 0;
+	while(flag != 1 && ponteiroS != this->secundario.end()){
+		if(ponteiroS->curso == curso){									//Verifica se eh o curso desejado.
+			flag = 1;
+		}else{
+			ponteiroS++;
+		}
 	}
 	if(flag == 1){
+		//Procura no indice primario.
+
 		ponteiroP = ponteiroS->registroP;
-		if(ponteiroP != primario.end()){
-			while(ponteiroP->identificador != chave || ponteiroP != primario.end()){		//procura no indice primario.
-				anterior = ponteiroP;											//guarda a referencia do anterior.
-				ponteiroP = ponteiroP->registro;								//passa pro proximo.
+
+		if(ponteiroP->registro != this->primario.end()){
+			while(ponteiroP->identificador != chave && ponteiroP->registro != this->primario.end()){
+
+				cout << "chave: " << ponteiroP->identificador << endl;
+
+				anterior = ponteiroP;						//Guarda a referencia do anterior.
+				ponteiroP = ponteiroP->registro;			//Passa pro proximo.
 			}
-			if(ponteiroP->identificador == chave){			//Se for o registro, retira e apaga.
-				ponteiroP->identificador = "*";							//Exclui registro e libera a memória.
-				while(anterior->registro != primario.end()){
-					ponteiroP = anterior->registro;
-					anterior = ponteiroP->registro;
+			cout << "to aquiiii" <<endl;
+			if(ponteiroP->identificador == chave){			//Se for o registro desejado, apaga e coloca '*'.
+				cout << "Achou a chave" << endl;
+				ponteiroP->identificador = "*";
+				anterior->registro = ponteiroP->registro;
+				anterior->ProxRegistro = ponteiroP->ProxRegistro;
+				ponteiroP = anterior;
+				while(ponteiroP->registro != this->primario.end()){
+					ponteiroP = ponteiroP->registro;
 					--ponteiroP->posicao;
 				}
 			}else{
@@ -243,14 +260,14 @@ void ArquivoDeIndice::excluir(){
 	
 	do{
 		cout << "Quer retirar outro? (S/N)" << endl;
+		getchar();
 		cin >> resp;
 		if(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
 			cout << "Resposta invalida." << endl;
-	}while(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N');
+	}while(resp != 's' && resp != 'S' && resp != 'n' && resp != 'N');
 	if(resp == 's' || resp == 'S')
 		this->excluir();						//Chama a funcao de novo se o usuario quiser excluir outro registro.
 	//atualiza o arq.ind 
-	this->visualizar();
 }
 
 
@@ -272,7 +289,7 @@ void ArquivoDeIndice::atualizar(){
 	cout << endl << "Nome: ";
 	cin >> nome;
 	chave = matricula + nome[0];
-	for(int i = 1; nome[i] != '\0', ++i){		// Pega as inicias do Nome.
+	for(int i = 1; nome[i] != '\0'; ++i){		// Pega as inicias do Nome.
 		if (nome[i] = ' ') chave += nome[i-1];
 	}
 
@@ -283,21 +300,6 @@ void ArquivoDeIndice::atualizar(){
 }
 
 
-void merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
-	 
-	=======
-	#include "Registros.hpp"
-
-	bool troca(string atual, string incere){
-		int j = 0;
-		while(atual[j] == incere[j])++j;
-		if (atual[j] > incere[j]) return 1;
-		return 0;
-	}
-
-	void ordena(list<IndiceP>::iterator anterior, IndiceP *Chave1){
-		Chave1->ProxRegistro = anterior->ProxRegistro;
-		Chave1->registro = anterior->registro;
-	}
-
+void merge(){
+	
 }

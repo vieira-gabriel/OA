@@ -26,7 +26,7 @@ const char* EscolherArquivo(){
 	return arq;
 }
 
-int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2){
+int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 	char resp;
 	const char* arquivo;
 	IndiceP Chave1;
@@ -35,7 +35,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2){
 
 	cout << endl << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;
 	do{
-		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Visualizar todos os registros." << endl;
+		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Visualizar as duas turmas." << endl;
 		cout << "5) Sair." << endl;
 		cout << endl << ">> ";
 		cin >> resp;
@@ -89,12 +89,19 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2){
 			}
 			break;
 		case('3'):
-			cout << "Te enganei, nao da pra atualizar ainda." << endl;
 			arquivo = EscolherArquivo();
+			if(arquivo = "lista1.txt"){
+				L1.atualizar();
+				L1.visualizar();
+			}
+			else{
+				L2.atualizar();			
+				L2.visualizar();
+			}
 			break;
 		case('4'):
-			cout << "Te enganei, nao da pra visualizar ainda." << endl;
-			arquivo = EscolherArquivo();
+			merge();
+			L3.visualizar();
 			break;
 		case('5'):
 			return 0;
@@ -106,12 +113,13 @@ int main(){
 	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
 	ArquivoDeIndice L1;
 	ArquivoDeIndice L2;
+	ArquivoDeIndice	L3;
 
 	L1.criar(lista1);
 	L2.criar(lista2);
 	L1.visualizar();
 
-	while(menu(L1, L2));
+	while(menu(L1, L2, L3));
 
 	return 0;
 }
