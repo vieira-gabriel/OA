@@ -10,31 +10,28 @@
 using namespace std;
 
 const char* EscolherArquivo(){
-	int resp;
+	char resp;
 	const char *arq;
 
-	cout << endl << "\tEscolha qual arquivo você deseja abrir:" << endl;
+	cout << endl << "\tEscolha qual turma você deseja abrir:" << endl;
 	do{
-		cout << "1) lista1.txt" << endl << "2) lista2.txt" << endl;
+		cout << " A" << endl << " B" << endl;
 		cout << endl << ">> ";
 		cin >> resp;
-		if(resp < 1 || resp > 2)
+		if(resp != 'a' && resp != 'A' && resp != 'b' && resp != 'B')
 			cout << endl << "Opcao inválida, escolha uma das opções abaixo:" << endl;
-	}while(resp < 1 || resp > 2);
-	if(resp == 1) arq = "lista1.txt";
+	}while(resp != 'a' && resp != 'A' && resp != 'b' && resp != 'B');
+	if(resp == 'a' || resp == 'A') arq = "lista1.txt";
 	else arq = "lista2.txt";
 	return arq;
 }
 
-void menu(){
-	int resp;
+int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2){
+	char resp;
 	const char* arquivo;
-	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
-	ArquivoDeIndice L1;
-	ArquivoDeIndice L2;
-
-	L1.criar(lista1);
-	L2.criar(lista2);
+	IndiceP Chave1;
+	IndiceS Chave2;
+	string nome, curso;
 
 	cout << endl << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;
 	do{
@@ -42,35 +39,79 @@ void menu(){
 		cout << "5) Sair." << endl;
 		cout << endl << ">> ";
 		cin >> resp;
-		if(resp<1 || resp>5)
+		if(resp<'1' || resp>'5')
 			cout << endl << "Opcao inválida, escolha uma das opções abaixo:" << endl << endl;
-	}while(resp<1 || resp>5);
+	}while(resp<'1' || resp>'5');
 
 	switch(resp){
-		case(1):
+		case('1'):
+			
 			arquivo = EscolherArquivo();
-			// 
-			break;
-		case(2):
-			cout << "Te enganei, nao da pra excluir ainda." << endl;
-			arquivo = EscolherArquivo();
+			cout << endl << endl << "\tInforme os dados do registro que deseja incluir:" << endl;		//Informacoes do registro que deve ser excluido.
+			cout << "Qual eh a matricula? ";
+			cin >> Chave1.identificador;
+			cout << "Qual eh o nome? ";
+			getline (cin, nome);
+			getline (cin, nome);
+			Chave1.identificador = Chave1.identificador + nome[0];
+			for(int i = 1; nome[i] != '\0'; ++i){
+					if(nome[i-1] == ' ') Chave1.identificador = Chave1.identificador + nome[i];
+			}
+			do{
+				cout << "Qual eh seu curso?(Entre com as duas iniciais em maiusculo) ";
+				cin>>curso;
+				if(curso.size() > 2)
+					cout << "Entre com apenas as duas iniciais em maiusculo" << endl;
+				else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
+					cout << "Entrada inválida" << endl;
+			}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
+			cout<<"seu curso: "<<curso<<endl<<endl;
+			Chave2.curso = curso;
 
+			if(arquivo = "lista1.txt"){
+				L1.incluir(Chave1, Chave2);
+				L1.visualizar();
+			}
+			else{
+				L2.incluir(Chave1, Chave2);			
+				L2.visualizar();
+			}
 			break;
-		case(3):
+		case('2'):
+			arquivo = EscolherArquivo();
+			if(arquivo = "lista1.txt"){
+				L1.excluir();
+				L1.visualizar();
+			}
+			else{
+				L2.excluir();			
+				L2.visualizar();
+			}
+			break;
+		case('3'):
 			cout << "Te enganei, nao da pra atualizar ainda." << endl;
 			arquivo = EscolherArquivo();
 			break;
-		case(4):
+		case('4'):
 			cout << "Te enganei, nao da pra visualizar ainda." << endl;
 			arquivo = EscolherArquivo();
 			break;
-		case(5):
-			return;
+		case('5'):
+			return 0;
 	}
+	return 1;
 }
 
 int main(){
-	menu();
+	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
+	ArquivoDeIndice L1;
+	ArquivoDeIndice L2;
+
+	L1.criar(lista1);
+	L2.criar(lista2);
+	L1.visualizar();
+
+	while(menu(L1, L2));
 
 	return 0;
 }
