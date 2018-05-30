@@ -45,11 +45,17 @@ public:
 	void excluir();
 	void atualizar(char);
 	void criaInd(char);
-	list<IndiceS> listaS(){
-		return this->secundario;
+	list<IndiceS>::iterator comecoS(){
+		return this->secundario.begin();
 	}
-	list<IndiceP> listaP(){
-		return this->primario;
+	list<IndiceS>::iterator fimS(){
+		return this->secundario.end();
+	}
+	list<IndiceP>::iterator comecoP(){
+		return this->primario.begin();
+	}
+	list<IndiceP>::iterator fimP(){
+		return this->primario.end();
 	}
 };
 

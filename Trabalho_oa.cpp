@@ -51,16 +51,16 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			cout << endl << endl << "\tInforme os dados do registro que deseja incluir:" << endl;		//Informacoes do registro que deve ser excluido.
 			cout << "Qual eh a matricula? ";
 			cin >> Chave1.identificador;
-			Chave1.completo = Chave1.identificador + ' ';
+			Chave1.completo = Chave1.identificador + '\t';
 			cout << "Qual eh o nome? ";
 			getline (cin, nome);
 			getline (cin, nome);
 			Chave1.identificador = Chave1.identificador + nome[0];
-			Chave1.completo += nome + ' ';
+			Chave1.completo += nome + '\t';
 			for(int i = 1; nome[i] != '\0'; ++i){
 					if(nome[i-1] == ' ') Chave1.identificador = Chave1.identificador + nome[i];
 			}
-			Chave1.completo += "32 ";
+			Chave1.completo += "32\t";
 			do{
 				cout << "Qual eh seu curso?(Entre com as duas iniciais em maiusculo) ";
 				cin>>curso;
@@ -70,9 +70,8 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 				else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
 					cout << "Entrada inválida" << endl;
 			}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
-			cout<<"seu curso: "<<curso<<endl<<endl;
 			Chave2.curso = curso;
-			Chave1.completo += curso + ' ';
+			Chave1.completo += curso + '\t';
 
 			if(arquivo == "lista1.txt"){
 				Chave1.completo += 'A';
