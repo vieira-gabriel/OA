@@ -78,11 +78,13 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 				Chave1.completo += 'A';
 				L1.incluir(Chave1, Chave2);
 				L1.visualizar();
+				L1.criaInd('A');
 			}
 			else{
 				Chave1.completo += 'B';
 				L2.incluir(Chave1, Chave2);			
 				L2.visualizar();
+				L2.criaInd('B');
 			}
 			break;
 		case('2'):
@@ -90,10 +92,12 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			if(arquivo == "lista1.txt"){
 				L1.excluir();
 				L1.visualizar();
+				L1.criaInd('A');
 			}
 			else{
 				L2.excluir();			
 				L2.visualizar();
+				L2.criaInd('B');
 			}
 			break;
 		case('3'):
@@ -101,10 +105,12 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			if(arquivo == "lista1.txt"){
 				L1.atualizar('A');
 				L1.visualizar();
+				L1.criaInd('A');
 			}
 			else{
 				L2.atualizar('B');			
 				L2.visualizar();
+				L2.criaInd('B');
 			}
 			break;
 		case('4'):
@@ -124,7 +130,9 @@ int main(){
 	ArquivoDeIndice	L3;
 
 	L1.criar(lista1);
+	L1.criaInd('A');
 	L2.criar(lista2);
+	L2.criaInd('B');
 
 	while(menu(L1, L2, L3));
 

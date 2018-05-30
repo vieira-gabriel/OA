@@ -44,11 +44,12 @@ public:
 	void criar(char*);
 	void excluir();
 	void atualizar(char);
+	void criaInd(char);
 	list<IndiceS> listaS(){
-		return secundario;
+		return this->secundario;
 	}
 	list<IndiceP> listaP(){
-		return primario;
+		return this->primario;
 	}
 };
 

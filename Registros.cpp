@@ -34,7 +34,6 @@ void ArquivoDeIndice::visualizar(){
 void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	list<IndiceP>::iterator ponteiroP, ponteiroSP, ponteiroAuxP, anterior;
 	list<IndiceS>::iterator ponteiroS, ponteiroAuxS ,fim;
-	IndiceP * regist;
 	IndiceP AuxP;
 	IndiceS AuxS;
 	int pos = 1, trocouS = 0, trocouP = 0, Prox;
@@ -189,6 +188,29 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	File.close();
 }
 
+void ArquivoDeIndice::criaInd(char arq){
+	ofstream Ind;
+
+	if(arq == 'A') Ind.open("indicelista1.ind", std::ofstream::out | std::ofstream::trunc);
+	else Ind.open("indicelista2.ind", std::ofstream::out | std::ofstream::trunc);
+
+	if(this->primario.empty()){
+		cout << "\tLista nao foi criada" << endl;
+		return;
+	}
+	Ind << "\t\t\tIndices secundarios" << endl << endl;
+	for(list<IndiceS>::iterator ponteiroS = this->secundario.begin(); ponteiroS != this->secundario.end(); ++ponteiroS){
+    	Ind << "\t" << ponteiroS->posicao << "\t\t" << ponteiroS->curso << "\t\t" << ponteiroS->posicaoP << endl;
+	}
+
+    Ind << endl << "\t\tIndices primarios" << endl << endl;
+	for(list<IndiceP>::iterator ponteiroP = this->primario.begin(); ponteiroP != this->primario.end(); ++ponteiroP){
+    	Ind << "\t"  << ponteiroP->posicao << "\t\t" << ponteiroP->identificador << "\t\t" << ponteiroP->ProxRegistro << endl;
+	}
+
+    Ind.close();
+}
+
 void ArquivoDeIndice::excluir(){ 
 	string nome, curso, chave, temp;
 	int flag;
@@ -326,14 +348,16 @@ ArquivoDeIndice merge(ArquivoDeIndice &L1, ArquivoDeIndice &L2){
 	do{
 		if(ponteiroS1->curso == ponteiroS2->curso){
 			Chave2 = *ponteiroS1;
-			ponteiroP1 = ponteiroS1->registroP;
-			ponteiroP2 = ponteiroS2->registroP;
+			ponteiroP1 = Chave2.registroP;
+			Chave2 = *ponteiroS2;
+			ponteiroP2 = Chave2.registroP;
+			Chave2 = *ponteiroS1;
 
 			do{
 				chave1 = *ponteiroP1;
+		cout << "AQUIIIIII" << endl;
 				chave2 = *ponteiroP2;
 				while(chave1.identificador[i] == chave2.identificador[i] && chave1.identificador[i] != '\0' && chave2.identificador[i] != '\0')++i;
-		cout << "AQUIIIIII" << endl;
 				if ((chave1.identificador[i] > chave2.identificador[i]) || (chave2.identificador[i] != '\0' && chave1.identificador[i] == '\0')){
 					Junto.incluir(*ponteiroP2, Chave2);
 					FileM << chave2.completo + '\n';
