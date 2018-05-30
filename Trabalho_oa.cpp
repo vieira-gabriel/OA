@@ -9,7 +9,7 @@
 
 using namespace std;
 
-string EscolherArquivo(){
+const char* EscolherArquivo(){
 	char resp;
 	const char *arq;
 
@@ -27,16 +27,15 @@ string EscolherArquivo(){
 }
 
 int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
-	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
 	char resp;
-	string arquivo;
+	const char* arquivo;
 	IndiceP Chave1;
 	IndiceS Chave2;
 	string nome, curso;
 
 	cout << endl << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;
 	do{
-		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Intercalar as duas turmas." << endl;
+		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Visualizar as duas turmas." << endl;
 		cout << "5) Sair." << endl;
 		cout << endl << ">> ";
 		cin >> resp;
@@ -61,16 +60,15 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			do{
 				cout << "Qual eh seu curso?(Entre com as duas iniciais em maiusculo) ";
 				cin>>curso;
-				cout<<"CURSO DIGITADO: "<<curso<<endl;
 				if(curso.size() > 2)
 					cout << "Entre com apenas as duas iniciais em maiusculo" << endl;
-				else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
+				else if((curso[0] < 'A' || curso[1] < 'A') || (curso[0] > 'Z' || curso[1] > 'Z'))
 					cout << "Entrada inválida" << endl;
-			}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
+			}while((curso[0] < 'A' || curso[1] < 'A') || (curso[0] > 'Z' || curso[1] > 'Z') || curso.size() > 2);
 			cout<<"seu curso: "<<curso<<endl<<endl;
 			Chave2.curso = curso;
 
-			if(arquivo == "lista1.txt"){
+			if(arquivo = "lista1.txt"){
 				L1.incluir(Chave1, Chave2);
 				L1.visualizar();
 			}
@@ -81,7 +79,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			break;
 		case('2'):
 			arquivo = EscolherArquivo();
-			if(arquivo == "lista1.txt"){
+			if(arquivo = "lista1.txt"){
 				L1.excluir();
 				L1.visualizar();
 			}
@@ -92,7 +90,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			break;
 		case('3'):
 			arquivo = EscolherArquivo();
-			if(arquivo == "lista1.txt"){
+			if(arquivo = "lista1.txt"){
 				L1.atualizar();
 				L1.visualizar();
 			}
@@ -102,7 +100,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			}
 			break;
 		case('4'):
-			//L3 = merge(lista1, lista2);
+			merge();
 			L3.visualizar();
 			break;
 		case('5'):
@@ -119,6 +117,7 @@ int main(){
 
 	L1.criar(lista1);
 	L2.criar(lista2);
+	L1.visualizar();
 
 	while(menu(L1, L2, L3));
 
