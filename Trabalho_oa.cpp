@@ -9,7 +9,7 @@
 
 using namespace std;
 
-const char* EscolherArquivo(){
+string EscolherArquivo(){
 	char resp;
 	const char *arq;
 
@@ -27,15 +27,16 @@ const char* EscolherArquivo(){
 }
 
 int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
+	char lista1[] = "lista1.txt", lista2[] = "lista2.txt";
 	char resp;
-	const char* arquivo;
+	string arquivo;
 	IndiceP Chave1;
 	IndiceS Chave2;
 	string nome, curso;
 
 	cout << endl << "\tEscolha uma das opcoes e digite o numero correspondente:" << endl;
 	do{
-		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Visualizar as duas turmas." << endl;
+		cout << "1) Incluir registros." << endl << "2) Excluir registros." << endl << "3) Atualizar registros." << endl << "4) Intercalar as duas turmas." << endl;
 		cout << "5) Sair." << endl;
 		cout << endl << ">> ";
 		cin >> resp;
@@ -50,36 +51,43 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			cout << endl << endl << "\tInforme os dados do registro que deseja incluir:" << endl;		//Informacoes do registro que deve ser excluido.
 			cout << "Qual eh a matricula? ";
 			cin >> Chave1.identificador;
+			Chave1.completo = Chave1.identificador + ' ';
 			cout << "Qual eh o nome? ";
 			getline (cin, nome);
 			getline (cin, nome);
 			Chave1.identificador = Chave1.identificador + nome[0];
+			Chave1.completo += nome + ' ';
 			for(int i = 1; nome[i] != '\0'; ++i){
 					if(nome[i-1] == ' ') Chave1.identificador = Chave1.identificador + nome[i];
 			}
+			Chave1.completo += "32 ";
 			do{
 				cout << "Qual eh seu curso?(Entre com as duas iniciais em maiusculo) ";
 				cin>>curso;
+				cout<<"CURSO DIGITADO: "<<curso<<endl;
 				if(curso.size() > 2)
 					cout << "Entre com apenas as duas iniciais em maiusculo" << endl;
-				else if((curso[0] < 'A' || curso[1] < 'A') || (curso[0] > 'Z' || curso[1] > 'Z'))
+				else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
 					cout << "Entrada inválida" << endl;
-			}while((curso[0] < 'A' || curso[1] < 'A') || (curso[0] > 'Z' || curso[1] > 'Z') || curso.size() > 2);
+			}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
 			cout<<"seu curso: "<<curso<<endl<<endl;
 			Chave2.curso = curso;
+			Chave1.completo += curso + ' ';
 
-			if(arquivo = "lista1.txt"){
+			if(arquivo == "lista1.txt"){
+				Chave1.completo += 'A';
 				L1.incluir(Chave1, Chave2);
 				L1.visualizar();
 			}
 			else{
+				Chave1.completo += 'B';
 				L2.incluir(Chave1, Chave2);			
 				L2.visualizar();
 			}
 			break;
 		case('2'):
 			arquivo = EscolherArquivo();
-			if(arquivo = "lista1.txt"){
+			if(arquivo == "lista1.txt"){
 				L1.excluir();
 				L1.visualizar();
 			}
@@ -90,17 +98,17 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			break;
 		case('3'):
 			arquivo = EscolherArquivo();
-			if(arquivo = "lista1.txt"){
-				L1.atualizar();
+			if(arquivo == "lista1.txt"){
+				L1.atualizar('A');
 				L1.visualizar();
 			}
 			else{
-				L2.atualizar();			
+				L2.atualizar('B');			
 				L2.visualizar();
 			}
 			break;
 		case('4'):
-			merge();
+			//L3 = merge(lista1, lista2);
 			L3.visualizar();
 			break;
 		case('5'):
@@ -117,7 +125,6 @@ int main(){
 
 	L1.criar(lista1);
 	L2.criar(lista2);
-	L1.visualizar();
 
 	while(menu(L1, L2, L3));
 

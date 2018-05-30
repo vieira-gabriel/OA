@@ -2,7 +2,7 @@
 
 bool troca(string atual, string incere){
 	int j = 0;
-	while(atual[j] == incere[j])++j;
+	while(atual[j] == incere[j] && atual[j] != '\0' && incere[j] != '\0')++j;
 	if (atual[j] > incere[j]) return 1;
 	return 0;
 }
@@ -40,6 +40,11 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	int pos = 1, trocouS = 0, trocouP = 0, Prox;
 	string id;
 	list<IndiceP>::iterator temp;
+
+	Chave2.registroP = primario.end();
+	Chave2.posicaoP = -1;
+	Chave1.registro = primario.end();
+	Chave1.ProxRegistro = -1;
 
 //-----------------  Inserindo a chave na lista secundária -----------------------------------------------------------
 
@@ -137,7 +142,6 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	}
 
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Insere chave no ultimo elemento da lista se ele ja não existir nela
-	this->visualizar();
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -146,11 +150,6 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	string matricula, nome, curso, chaveP, aux, turma;
 	IndiceP Chave1;
 	IndiceS Chave2;
-
-	Chave2.registroP = primario.end();
-	Chave2.posicaoP = -1;
-	Chave1.registro = primario.end();
-	Chave1.ProxRegistro = -1;
 
 	if(!this->primario.empty()){
 		cout << "Lista ja existente" << endl;
@@ -164,9 +163,11 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	}
 	File >> matricula;
 	while(File.good()){						// laço de repetição para executar enquanto o arquivo não acaba
+		Chave1.completo = matricula + ' ';
 		chaveP = matricula;
 		do{
 			File >> nome;
+			Chave1.completo += nome + ' ';
 			if(nome[0] < '0' || nome[0] > '9'){
 				aux = nome[0];
 				chaveP = chaveP + aux;
@@ -176,8 +177,10 @@ void ArquivoDeIndice::criar(char arquivo[]){
 
 		Chave1.identificador = chaveP;
 		File >> curso;
+		Chave1.completo += curso + ' ';
 		Chave2.curso = curso;
 		File >> turma;
+		Chave1.completo += turma + ' ';
 
 		this->incluir(Chave1, Chave2);
 		File >> matricula;
@@ -266,7 +269,7 @@ void ArquivoDeIndice::excluir(){
 }
 
 
-void ArquivoDeIndice::atualizar(){
+void ArquivoDeIndice::atualizar(char turma){
 	string curso, matricula, nome, chave, aux;
 	IndiceP Chave1;
 	IndiceS Chave2;
@@ -281,20 +284,73 @@ void ArquivoDeIndice::atualizar(){
 	cin >> curso;
 	cout << endl << "Matricula: ";
 	cin >> matricula;
+	Chave1.completo = matricula + ' ';
 	cout << endl << "Nome: ";
 	cin >> nome;
 	chave = matricula + nome[0];
+	Chave1.completo += nome + ' ';
+	Chave1.completo += "32 ";
 	for(int i = 1; nome[i] != '\0'; ++i){		// Pega as inicias do Nome.
 		if (nome[i] = ' ') chave += nome[i-1];
 	}
 
 	Chave1.identificador = chave;
 	Chave2.curso = curso;
+	Chave1.completo += curso + ' ';
+	Chave1.completo += turma;
 	this->incluir(Chave1, Chave2);			// Inclui o registro com as alterãcoes nas listas.
 
 }
 
 
-void merge(){
-	
+ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
+	ArquivoDeIndice Junto;
+	ofstream FileM;
+	IndiceS Chave2;
+	list<IndiceP>::iterator ponteiroP1, ponteiroP2;
+	list<IndiceS>::iterator ponteiroS1, ponteiroS2;
+	list<IndiceP> primarioL1, primarioL2;
+	list<IndiceS> secundarioL1, secundarioL2;
+	int i = 0;
+
+	primarioL1 = L1.listaP();
+	primarioL2 = L2.listaP();
+	secundarioL1 = L1.listaS();
+	secundarioL2 = L2.listaS();
+
+	FileM.open("lista12.txt", std::ofstream::out | std::ofstream::trunc); // Se o arquivo existia anteriormente, ele apaga o que estava dentro
+
+	do{
+		ponteiroS1 = secundarioL1.begin();
+		ponteiroS2 = secundarioL2.begin();
+
+		if(ponteiroS1->curso == ponteiroS1->curso){
+			Chave2 = *ponteiroS1;
+			ponteiroP1 = ponteiroS1->registroP;
+			ponteiroP2 = ponteiroS2->registroP;
+
+			do{
+				while(ponteiroP1->identificador[i] == ponteiroP2->identificador[i] && ponteiroP1->identificador[i] != '\0' && ponteiroP2->identificador[i] != '\0')++i;
+				if (ponteiroP1->identificador[i] > ponteiroP2->identificador[i]){
+					Junto.incluir(*ponteiroP2, Chave2);
+					++ponteiroP2;
+				}
+				else if(ponteiroP1->identificador[i] < ponteiroP2->identificador[i]){
+					Junto.incluir(*ponteiroP1, Chave2);
+					++ponteiroP1;
+				}
+				else{
+					Junto.incluir(*ponteiroP1, Chave2);
+					++ponteiroP1;
+					++ponteiroP2;
+				}
+			}while(ponteiroP1 != primarioL1.end()); //<--------------------------------- verificar
+		}
+		else{
+
+		}
+	}while(ponteiroS1 != secundarioL1.end() && ponteiroS2 != secundarioL2.end());
+
+  	FileM.close();
+	return Junto;
 }

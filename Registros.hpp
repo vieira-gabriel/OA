@@ -43,7 +43,7 @@ public:
 	void incluir(IndiceP, IndiceS);
 	void criar(char*);
 	void excluir();
-	void atualizar();
+	void atualizar(char);
 	list<IndiceS> listaS(){
 		return secundario;
 	}
