@@ -2,7 +2,7 @@
 
 bool troca(string atual, string incere){
 	int j = 0;
-	while(atual[j] == incere[j] && atual[j] != '\0' && incere[j] != '\0')++j;
+	while(atual[j] == incere[j])++j;
 	if (atual[j] > incere[j]) return 1;
 	return 0;
 }
@@ -40,11 +40,6 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	int pos = 1, trocouS = 0, trocouP = 0, Prox;
 	string id;
 	list<IndiceP>::iterator temp;
-
-	Chave2.registroP = primario.end();
-	Chave2.posicaoP = -1;
-	Chave1.registro = primario.end();
-	Chave1.ProxRegistro = -1;
 
 //-----------------  Inserindo a chave na lista secundária -----------------------------------------------------------
 
@@ -142,6 +137,7 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 	}
 
 	if(ponteiroS == this->secundario.end()) this->secundario.insert(ponteiroS, Chave2);	// Insere chave no ultimo elemento da lista se ele ja não existir nela
+	this->visualizar();
 	//Aqui entra algoritmo de ordenação lista secundária
 }
 
@@ -150,6 +146,11 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	string matricula, nome, curso, chaveP, aux, turma;
 	IndiceP Chave1;
 	IndiceS Chave2;
+
+	Chave2.registroP = primario.end();
+	Chave2.posicaoP = -1;
+	Chave1.registro = primario.end();
+	Chave1.ProxRegistro = -1;
 
 	if(!this->primario.empty()){
 		cout << "Lista ja existente" << endl;
@@ -163,11 +164,9 @@ void ArquivoDeIndice::criar(char arquivo[]){
 	}
 	File >> matricula;
 	while(File.good()){						// laço de repetição para executar enquanto o arquivo não acaba
-		Chave1.completo = matricula + ' ';
 		chaveP = matricula;
 		do{
 			File >> nome;
-			Chave1.completo += nome + ' ';
 			if(nome[0] < '0' || nome[0] > '9'){
 				aux = nome[0];
 				chaveP = chaveP + aux;
@@ -177,10 +176,8 @@ void ArquivoDeIndice::criar(char arquivo[]){
 
 		Chave1.identificador = chaveP;
 		File >> curso;
-		Chave1.completo += curso + ' ';
 		Chave2.curso = curso;
 		File >> turma;
-		Chave1.completo += turma + ' ';
 
 		this->incluir(Chave1, Chave2);
 		File >> matricula;
@@ -193,7 +190,8 @@ void ArquivoDeIndice::excluir(){
 	string nome, curso, chave, temp;
 	int flag;
 	char resp, turma;
-	list<IndiceP>::iterator ponteiroP,anterior;
+	list<IndiceP>::iterator ponteiroP;
+	list<IndiceP>::iterator anterior;
 	list<IndiceS>::iterator ponteiroS;
 	cout << "Informe os dados do registro cadastrado:" << endl;		//Informacoes do registro que deve ser excluido.
 	cout << "Matricula: ";
@@ -211,12 +209,12 @@ void ArquivoDeIndice::excluir(){
 		cin >> curso;
 		if(curso.size() > 2)
 			cout << "Entre com apenas as duas iniciais em maiusculo." << endl;
-		else if((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z'))
+		else if((curso[0] < 'A' || curso[1] < 'A') || (curso[0] > 'Z' || curso[1] > 'Z'))
 			cout << "Entrada inválida." << endl;
-	}while((curso[0] < 'A' && curso[1] < 'A') || (curso[0] > 'Z' && curso[1] > 'Z') || curso.size() > 2);
+	}while((curso[0] < 'A' || curso[1] < 'A') || (curso[0] > 'Z' || curso[1] > 'Z') || curso.size() > 2);
 
 		//Procura no indice secundario.
-	cout<<"AQUIHEUHEUHUEHUE!!"<<endl;
+
 	ponteiroS = this->secundario.begin();
 	flag = 0;
 	while(flag != 1 && ponteiroS != this->secundario.end()){
@@ -226,22 +224,18 @@ void ArquivoDeIndice::excluir(){
 			ponteiroS++;
 		}
 	}
+
 	if(flag == 1){
 		//Procura no indice primario.
 
 		ponteiroP = ponteiroS->registroP;
-
-		if(ponteiroP->registro != this->primario.end()){
-			while(ponteiroP->identificador != chave && ponteiroP->registro != this->primario.end()){
-
-				cout << "chave: " << ponteiroP->identificador << endl;
-
+		cout << ponteiroP->identificador << " " << chave<<endl;
+		if(ponteiroS->registroP != this->primario.end()){
+			while(ponteiroP->identificador != chave && ponteiroP != this->primario.end()){
 				anterior = ponteiroP;						//Guarda a referencia do anterior.
 				ponteiroP = ponteiroP->registro;			//Passa pro proximo.
 			}
-			cout << "to aquiiii" <<endl;
 			if(ponteiroP->identificador == chave){			//Se for o registro desejado, apaga e coloca '*'.
-				cout << "Achou a chave" << endl;
 				ponteiroP->identificador = "*";
 				anterior->registro = ponteiroP->registro;
 				anterior->ProxRegistro = ponteiroP->ProxRegistro;
@@ -262,7 +256,6 @@ void ArquivoDeIndice::excluir(){
 	
 	do{
 		cout << "Quer retirar outro? (S/N)" << endl;
-		getchar();
 		cin >> resp;
 		if(resp != 's' || resp != 'S' || resp != 'n' || resp != 'N')
 			cout << "Resposta invalida." << endl;
@@ -277,6 +270,10 @@ void ArquivoDeIndice::atualizar(){
 	string curso, matricula, nome, chave, aux;
 	IndiceP Chave1;
 	IndiceS Chave2;
+
+	Chave2.registroP = primario.end();		//Inicializa o registro.
+	Chave2.posicaoP = -1;
+	Chave1.registro = primario.end();
 
 	this->excluir();					// Exclui o registro.
 	cout << "Informe os dados do registro com sua alteracao incluida:" << endl;
@@ -298,54 +295,6 @@ void ArquivoDeIndice::atualizar(){
 }
 
 
-ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
-	ArquivoDeIndice Junto;
-	ofstream FileM;
-	IndiceS Chave2;
-	list<IndiceP>::iterator ponteiroP1, ponteiroP2;
-	list<IndiceS>::iterator ponteiroS1, ponteiroS2;
-	list<IndiceP> primarioL1, primarioL2;
-	list<IndiceS> secundarioL1, secundarioL2;
-	int i = 0;
-
-	primarioL1 = L1.listaP();
-	primarioL2 = L2.listaP();
-	secundarioL1 = L1.listaS();
-	secundarioL2 = L2.listaS();
-
-	FileM.open("lista12.txt", std::ofstream::out | std::ofstream::trunc); // Se o arquivo existia anteriormente, ele apaga o que estava dentro
-
-	do{
-		ponteiroS1 = inicioS1;
-		ponteiroS2 = inicioS2;
-
-		if(ponteiroS1->curso == ponteiroS1->curso){
-			Chave2 = *ponteiroS1;
-			ponteiroP1 = ponteiroS1->registroP;
-			ponteiroP2 = ponteiroS2->registroP;
-
-			do{
-				while(poteiroP1[j] == ponteiroP2[j] && poteiroP1[j] != '\0' && ponteiroP2[j] != '\0')++j;
-				if (poteiroP1[j] > ponteiroP2[j]){
-					Junto.incluir(ponteiroP2, Chave2);
-					++ponteiroP2;
-				}
-				else if(poteiroP1[j] < ponteiroP2[j]){
-					Junto.incluir(ponteiroP1, Chave2);
-					++ponteiroP1;
-				}
-				else{
-					Junto.incluir(ponteiroP1, Chave2);
-					++ponteiroP1;
-					++ponteiroP2;
-				}
-			}while(ponteiroP1 != primeiro.end()); //<--------------------------------- verificar
-		}
-		else{
-
-		}
-	}while(ponteiroS1 != fimS1 && ponteiroS2 != fimS2);
-
-  	FileM.close();
-	return Junto;
+void merge(){
+	
 }
