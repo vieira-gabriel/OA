@@ -303,12 +303,13 @@ void ArquivoDeIndice::atualizar(char turma){
 }
 
 
-ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
+ArquivoDeIndice merge(ArquivoDeIndice &L1, ArquivoDeIndice &L2){
 	ArquivoDeIndice Junto;
 	ofstream FileM;
+	IndiceP chave1, chave2;
 	IndiceS Chave2;
 	list<IndiceP>::iterator ponteiroP1, ponteiroP2;
-	list<IndiceS>::iterator ponteiroS1, ponteiroS2;
+	list<IndiceS>::iterator ponteiroS1, ponteiroS2, aux;
 	list<IndiceP> primarioL1, primarioL2;
 	list<IndiceS> secundarioL1, secundarioL2;
 	int i = 0;
@@ -320,37 +321,81 @@ ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
 
 	FileM.open("lista12.txt", std::ofstream::out | std::ofstream::trunc); // Se o arquivo existia anteriormente, ele apaga o que estava dentro
 
+	ponteiroS1 = secundarioL1.begin();
+	ponteiroS2 = secundarioL2.begin();
 	do{
-		ponteiroS1 = secundarioL1.begin();
-		ponteiroS2 = secundarioL2.begin();
-
-		if(ponteiroS1->curso == ponteiroS1->curso){
+		if(ponteiroS1->curso == ponteiroS2->curso){
 			Chave2 = *ponteiroS1;
 			ponteiroP1 = ponteiroS1->registroP;
 			ponteiroP2 = ponteiroS2->registroP;
 
 			do{
-				while(ponteiroP1->identificador[i] == ponteiroP2->identificador[i] && ponteiroP1->identificador[i] != '\0' && ponteiroP2->identificador[i] != '\0')++i;
-				if (ponteiroP1->identificador[i] > ponteiroP2->identificador[i]){
+				chave1 = *ponteiroP1;
+				chave2 = *ponteiroP2;
+				while(chave1.identificador[i] == chave2.identificador[i] && chave1.identificador[i] != '\0' && chave2.identificador[i] != '\0')++i;
+		cout << "AQUIIIIII" << endl;
+				if ((chave1.identificador[i] > chave2.identificador[i]) || (chave2.identificador[i] != '\0' && chave1.identificador[i] == '\0')){
 					Junto.incluir(*ponteiroP2, Chave2);
+					FileM << chave2.completo + '\n';
 					++ponteiroP2;
+					chave2 = *ponteiroP2;
 				}
-				else if(ponteiroP1->identificador[i] < ponteiroP2->identificador[i]){
+				else if((chave1.identificador[i] < chave2.identificador[i]) || (chave1.identificador[i] != '\0' && chave2.identificador[i] == '\0')){
 					Junto.incluir(*ponteiroP1, Chave2);
+					FileM << chave1.completo + '\n';
 					++ponteiroP1;
+					chave1 = *ponteiroP1;
 				}
 				else{
 					Junto.incluir(*ponteiroP1, Chave2);
+					FileM << chave1.completo + '\n';
 					++ponteiroP1;
 					++ponteiroP2;
+					chave2 = *ponteiroP2;
+					chave1 = *ponteiroP1;
 				}
-			}while(ponteiroP1 != primarioL1.end()); //<--------------------------------- verificar
+				i = 0;
+			}while(ponteiroP1 != primarioL1.end() || ponteiroP2 != primarioL2.end()); //<--------------------------------- verificar
+			if(ponteiroP1 != primarioL1.end() && ponteiroP2 == primarioL2.end()){
+				while(ponteiroP1 != primarioL1.end()){
+					Junto.incluir(*ponteiroP1, Chave2);
+					FileM << chave1.completo + '\n';
+					++ponteiroP1;
+					chave1 = *ponteiroP1;
+				}
+			}
+			else if(ponteiroP2 != primarioL2.end() && ponteiroP1 == primarioL1.end()){
+				while(ponteiroP2 != primarioL2.end()){
+					Junto.incluir(*ponteiroP2, Chave2);
+					FileM << chave2.completo + '\n';
+					++ponteiroP2;
+					chave2 = *ponteiroP2;
+				}
+			}
+			++ponteiroS1;
+			++ponteiroS2;
 		}
 		else{
-
+			while(ponteiroS1->curso[i] == ponteiroS2->curso[i] && ponteiroS1->curso[i] != '\0' && ponteiroS2->curso[i] != '\0')++i;
+			if(ponteiroS1->curso[i] > ponteiroS2->curso[i]){
+				ponteiroP2 = ponteiroS2->registroP;
+				Junto.incluir(*ponteiroP2, Chave2);
+				chave2 = *ponteiroP2;
+				FileM << chave2.completo + '\n';
+				++ponteiroP2;
+			}
+			else if(ponteiroS1->curso[i] < ponteiroS2->curso[i]){
+				ponteiroP1 = ponteiroS1->registroP;
+				Junto.incluir(*ponteiroP1, Chave2);
+				chave1 = *ponteiroP1;
+				FileM << chave1.completo + '\n';
+				++ponteiroP1;
+			}
+			i = 0;
 		}
 	}while(ponteiroS1 != secundarioL1.end() && ponteiroS2 != secundarioL2.end());
 
   	FileM.close();
+  	Junto.visualizar();
 	return Junto;
 }

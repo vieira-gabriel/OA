@@ -108,7 +108,7 @@ int menu(ArquivoDeIndice &L1, ArquivoDeIndice &L2, ArquivoDeIndice &L3){
 			}
 			break;
 		case('4'):
-			//L3 = merge(lista1, lista2);
+			L3 = merge(L1, L2);
 			L3.visualizar();
 			break;
 		case('5'):
