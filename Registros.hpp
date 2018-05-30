@@ -44,11 +44,11 @@ public:
 	void criar(char*);
 	void excluir();
 	void atualizar();
-	list<IndiceS>::iterator comecoS(){
-		return this->secundario.begin();
+	list<IndiceS> listaS(){
+		return secundario;
 	}
-	list<IndiceS>::iterator fimS(){
-		return this->secundario.end();
+	list<IndiceP> listaP(){
+		return primario;
 	}
 };
 

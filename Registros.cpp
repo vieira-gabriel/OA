@@ -303,13 +303,15 @@ ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
 	ofstream FileM;
 	IndiceS Chave2;
 	list<IndiceP>::iterator ponteiroP1, ponteiroP2;
-	list<IndiceS>::iterator ponteiroS1, ponteiroS2, inicioS1, inicioS2, fimS1, fimS2;
+	list<IndiceS>::iterator ponteiroS1, ponteiroS2;
+	list<IndiceP> primarioL1, primarioL2;
+	list<IndiceS> secundarioL1, secundarioL2;
 	int i = 0;
 
-	inicioS1 = L1.comecoS();
-	inicioS2 = L2.comecoS();
-	fimS1 = L1.fimS();
-	fimS2 = L2.fimS();
+	primarioL1 = L1.listaP();
+	primarioL2 = L2.listaP();
+	secundarioL1 = L1.listaS();
+	secundarioL2 = L2.listaS();
 
 	FileM.open("lista12.txt", std::ofstream::out | std::ofstream::trunc); // Se o arquivo existia anteriormente, ele apaga o que estava dentro
 
@@ -336,8 +338,8 @@ ArquivoDeIndice merge(ArquivoDeIndice L1, ArquivoDeIndice L2){
 					Junto.incluir(ponteiroP1, Chave2);
 					++ponteiroP1;
 					++ponteiroP2;
-				}while(ponteiroP1 != primeiro.end()); //<--------------------------------- verificar
-			}
+				}
+			}while(ponteiroP1 != primeiro.end()); //<--------------------------------- verificar
 		}
 		else{
 
