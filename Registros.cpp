@@ -32,11 +32,11 @@ void ArquivoDeIndice::visualizar(){
 }
 
 void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
-	list<IndiceP>::iterator ponteiroP, ponteiroSP, ponteiroAuxP, anterior;
+	list<IndiceP>::iterator ponteiroP, ponteiroSP, ponteiroAuxP, anterior, EspLivre;
 	list<IndiceS>::iterator ponteiroS, ponteiroAuxS ,fim;
 	IndiceP AuxP;
 	IndiceS AuxS;
-	int pos = 1, trocouS = 0, trocouP = 0, Prox;
+	int pos = 1, trocouS = 0, trocouP = 0, Prox, temEspaco = 0;
 	string id;
 	list<IndiceP>::iterator temp;
 
@@ -92,12 +92,25 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 		pos++;
 		ponteiroP++;
 	}
-	Chave1.posicao = pos;
+
+	ponteiroP = this->primario.begin();
+	int livre = 1;
+	while(ponteiroP->identificador != "*" && ponteiroP != this->primario.end()){
+		++ponteiroP;
+		++livre;
+	}
+	if(ponteiroP->identificador == "*"){
+		temEspaco = 1;
+		EspLivre = ponteiroP;
+	}
+	if(!temEspaco) Chave1.posicao = pos;
+	else Chave1.posicao = livre;
 
 	if(Chave2.posicaoP == -1){
 		Chave1.registro = primario.end();
 		Chave1.ProxRegistro = -1;
-		this->primario.insert(primario.end(), Chave1);
+		if(!temEspaco) this->primario.insert(primario.end(), Chave1);
+		else this->primario.insert(EspLivre, Chave1);
 	}
 	else{
 		Prox = Chave2.posicaoP;
@@ -131,10 +144,12 @@ void ArquivoDeIndice::incluir(IndiceP Chave1, IndiceS Chave2){
 				anterior++;
 				pos++;
 			}
-			Chave1.posicao = pos;
+			if(!temEspaco) Chave1.posicao = pos;
+			else Chave1.posicao = livre;
 		}
 		if(!trocouS) Chave2.posicaoP = pos;
-		this->primario.insert(primario.end(), Chave1);
+		if(!temEspaco) this->primario.insert(primario.end(), Chave1);
+		else this->primario.insert(EspLivre, Chave1);
 	}
 	ponteiroP = this->primario.begin();
 	while(ponteiroP->identificador != Chave1.identificador && ponteiroP != this->primario.end()){
