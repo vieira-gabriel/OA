@@ -1,17 +1,12 @@
 #define REGISTROS_H
 
-#include <stdio.h>
-#include <stdbool.h>
 #include <stdlib.h>
 #include <string>
-#include <cstring>
-#include <stdexcept>
-#include <string.h>
 #include <iostream>
 #include <fstream>
+#include <algorithm>
 #include <list>
 #include <iterator>
-#include <algorithm>
 
 using namespace std;
 

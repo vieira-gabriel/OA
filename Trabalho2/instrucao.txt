@@ -1,0 +1,8 @@
+Aluno: Gabriel Vieira de Arimatéa
+
+Matricula: 15/0126956
+
+	Para compilar o cógigo, utilizar: g++ -o Exec ArvoreB.cpp Main.cpp
+
+
+	Para executar o código, utilizar: ./Exec
